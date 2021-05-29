@@ -1,0 +1,21 @@
+@startuml phase1
+footer Learn path app phase 1
+
+' Azure
+!define AzurePuml https://raw.githubusercontent.com/RicardoNiepel/Azure-PlantUML/release/2-1/dist
+
+!includeurl AzurePuml/AzureCommon.puml
+!includeurl AzurePuml/AzureSimplified.puml
+
+!includeurl AzurePuml/Compute/AzureAppService.puml
+!includeurl AzurePuml/Databases/AzureSqlDatabase.puml
+
+left to right direction
+
+AzureAppService(mvc, "MVC", "Global")
+AzureSqlDatabase(sql, "Item Database", "Global")
+
+mvc ---> sql
+sql ---> mvc
+
+@enduml

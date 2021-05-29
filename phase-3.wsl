@@ -1,0 +1,55 @@
+@startuml phase3
+footer Learn path app phase 3
+
+' Azure
+!define AzurePuml https://raw.githubusercontent.com/RicardoNiepel/Azure-PlantUML/release/2-1/dist
+
+!includeurl AzurePuml/AzureCommon.puml
+!includeurl AzurePuml/AzureSimplified.puml
+
+!includeurl AzurePuml/Compute/AzureAppService.puml
+!includeurl AzurePuml/Databases/AzureSqlDatabase.puml
+!includeurl AzurePuml/Databases/AzureCosmosDb.puml
+!includeurl AzurePuml/Databases/AzureRedisCache.puml
+!includeurl AzurePuml/Compute/AzureFunction.puml
+
+together {
+    AzureAppService(crud, "CRUD API", "Global")
+    AzureAppService(ledger, "Ledger API", "Global")
+    AzureAppService(rel, "Relation API", "Global")
+    AzureAppService(gql, "GraphQL", "Global")
+}
+
+AzureAppService(client, "Front", "Global")
+
+together {
+    AzureRedisCache(redis1, "Cache SQL", "Global")
+    AzureRedisCache(redis2, "Cache NoSQL", "Global")
+    AzureSqlDatabase(sql, "Item Database", "Global")
+
+    together {
+        AzureFunction(func, "Total counter", "Global")
+        AzureCosmosDb(nosql, "Ledger statements", "Global")
+    }
+}
+
+
+crud ---> sql
+rel ---> sql
+ledger ---> nosql
+
+nosql -> func
+func -> sql
+
+gql <--- redis1
+gql <--- redis2
+
+redis1 <- sql
+redis2 <- nosql
+
+client --> ledger
+client --> crud
+client --> rel
+client <-- gql
+
+@enduml
